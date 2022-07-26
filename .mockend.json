@@ -1,5 +1,8 @@
 {
   "Specimen": {
-    "id": { "string": {} }
+    "id": { "string": {} },
+    "scientificName": { "string": {} },
+    "commonName": { "string": {} }
+
   }
 }
