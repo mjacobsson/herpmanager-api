@@ -1,7 +1,8 @@
 import http from 'http';
 import express, { Express } from 'express';
 import morgan from 'morgan';
-import routes from './routes/specimens';
+import specimens from './routes/specimens';
+import breedings from './routes/breeding-events';
 
 const router: Express = express();
 
@@ -19,7 +20,8 @@ router.use((req, res, next) => {
     next();
 });
 
-router.use('/', routes);
+router.use('/', specimens);
+router.use('/', breedings);
 
 router.use((req, res, next) => {
     const error = new Error('not found');

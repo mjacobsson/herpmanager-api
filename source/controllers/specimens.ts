@@ -1,10 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import axios, { AxiosResponse } from 'axios';
 
-interface Specimen {
+export interface Specimen {
     id: Number;
     scientificName: String;
     commonName: String;
+    sex: String;
+    birthDate: String;
+    sire: Specimen;
+    dam: Specimen;
 }
 
 const getSpecimens = async (req: Request, res: Response, next: NextFunction) => {
