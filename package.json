@@ -4,9 +4,11 @@
   "description": "",
   "main": "source/server.ts",
   "scripts": {
+    "lint": "eslint . --ext .ts",
     "test": "jest --detectOpenHandles",
     "dev": "nodemon source/server.ts",
-    "build": "rm -rf build/ && prettier --write source/ && tsc"
+    "build": "rm -rf build/ && prettier --write source/ && tsc",
+    "prettier-format": "prettier --config .prettierrc '*/**/*.ts' --write"
   },
   "keywords": [],
   "author": "",
@@ -27,8 +29,15 @@
     "@shelf/jest-mongodb": "^4.0.0",
     "@types/jest": "^28.1.6",
     "@types/supertest": "^2.0.12",
+    "@typescript-eslint/eslint-plugin": "^5.33.0",
+    "@typescript-eslint/parser": "^5.33.0",
+    "eslint": "^8.21.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-no-loops": "^0.3.0",
+    "eslint-plugin-prettier": "^4.2.1",
     "jest": "^28.1.3",
     "mongodb-memory-server": "^8.8.0",
+    "prettier": "^2.7.1",
     "supertest": "^6.2.4",
     "ts-jest": "^28.0.7"
   }
