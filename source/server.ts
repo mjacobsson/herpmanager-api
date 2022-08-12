@@ -3,6 +3,7 @@ import express, { Express } from 'express';
 import morgan from 'morgan';
 import specimens from './routes/specimens';
 import breedings from './routes/breeding-events';
+import feedings from './routes/feeding-events';
 import { connect } from 'mongoose';
 
 const app: Express = express();
@@ -29,6 +30,7 @@ async function main() {
 
   app.use('/', specimens);
   app.use('/', breedings);
+  app.use('/', feedings);
 
   app.use((req, res, next) => {
     const error = new Error('not found');
@@ -37,12 +39,12 @@ async function main() {
     });
   });
 
-  const mongo = await connect('mongodb://localhost:27017/herpmanager');
+  //const mongo = await connect('mongodb://localhost:27017/herpmanager');
 
   const PORT: any = process.env.PORT ?? 6060;
-  httpServer.listen(PORT, () =>
-    console.log(`The server is running on port ${PORT}`)
-  );
+  // httpServer.listen(PORT, () =>
+  //   console.log(`The server is running on port ${PORT}`)
+  // );
 }
 
 main();
