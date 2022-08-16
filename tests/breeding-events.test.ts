@@ -1,25 +1,36 @@
 import request from 'supertest';
 import { app } from '../source/server';
-import { connectDB, closeDB } from './db';
-import http from 'http';
+import { closeDB } from '../source/db';
+import { specimen } from '../source/controllers/specimens';
 
 const breedingEvent = {
   id: 42,
   date: '2013-04-27T22:46:27.000Z',
-  comment: 'Ovulation'
+  comment: 'Ovulation',
+  male: 'm-123'
 };
 
-let server: any;
+const testSpecimens = [
+  {
+    id: 'm-123',
+    scientificName: 'Antaresia childreni',
+    commonName: 'Childrens python',
+    sex: 'male'
+  },
+  {
+    id: 'f-123',
+    scientificName: 'Antaresia childreni',
+    commonName: 'Childrens python',
+    sex: 'female'
+  }
+];
 
 beforeAll(async () => {
-  server = http.createServer();
-  server.listen(6666, () => console.log(`The server is running on port 6666`));
-  await connectDB();
+  await specimen.insertMany(testSpecimens);
 });
 
 afterAll(async () => {
-  closeDB();
-  server.close();
+  await closeDB();
 });
 
 describe('/breedings', () => {

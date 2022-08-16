@@ -1,7 +1,6 @@
 import request from 'supertest';
 import { app } from '../source/server';
-import { connectDB, closeDB } from './db';
-import http from 'http';
+import { closeDB } from '../source/db';
 
 const specimen = {
   id: 'm-123',
@@ -9,17 +8,8 @@ const specimen = {
   sex: 'unsexed'
 };
 
-let server: any;
-
-beforeAll(async () => {
-  server = http.createServer();
-  server.listen(6666, () => console.log(`The server is running on port 6666`));
-  await connectDB();
-});
-
 afterAll(async () => {
-  closeDB();
-  server.close();
+  await closeDB();
 });
 
 describe('/specimen', () => {

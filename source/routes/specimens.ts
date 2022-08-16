@@ -1,5 +1,6 @@
 import express from 'express';
 import controller from '../controllers/specimens';
+
 const router = express.Router();
 
 router.get('/specimens', controller.getSpecimens);

@@ -1,4 +1,4 @@
-import { Request, Response, NextFunction } from 'express';
+import { Request, Response } from 'express';
 import { Schema, model } from 'mongoose';
 
 export interface ISpecimen {
@@ -21,9 +21,9 @@ const specimenSchema = new Schema<ISpecimen>({
   dam: { type: String, required: false }
 });
 
-const specimen = model<ISpecimen>('Specimen', specimenSchema);
+export const specimen = model<ISpecimen>('Specimen', specimenSchema);
 
-const addSpecimen = async (req: Request, res: Response, next: NextFunction) => {
+const addSpecimen = async (req: Request, res: Response) => {
   const id: string = req.body.id;
   const scientificName: string = req.body.scientificName;
   const commonName: string = req.body.commonName;
@@ -52,26 +52,18 @@ const addSpecimen = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-const getSpecimens = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const getSpecimens = async (req: Request, res: Response) => {
   const result = await specimen.find();
   return res.status(result.length != 0 ? 200 : 404).json(result);
 };
 
-const getSpecimen = async (req: Request, res: Response, next: NextFunction) => {
+const getSpecimen = async (req: Request, res: Response) => {
   const id: string = req.params.id;
   const result = await specimen.findOne({ id: id });
   return res.status(result ? 200 : 404).json(result);
 };
 
-const updateSpecimen = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const updateSpecimen = async (req: Request, res: Response) => {
   const id: string = req.params.id;
   const scientificName: string = req.body.scientificName;
   const commonName: string = req.body.commonName;
@@ -92,11 +84,7 @@ const updateSpecimen = async (
   return res.status(200).json(response);
 };
 
-const deleteSpecimen = async (
-  req: Request,
-  res: Response,
-  next: NextFunction
-) => {
+const deleteSpecimen = async (req: Request, res: Response) => {
   const id: string = req.params.id;
   const { acknowledged, deletedCount } = await specimen.deleteOne({ id: id });
 
