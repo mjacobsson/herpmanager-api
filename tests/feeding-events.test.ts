@@ -1,31 +1,34 @@
 import request from 'supertest';
 import { app } from '../source/server';
-import { connectDB, closeDB } from './db';
-import http from 'http';
+import { closeDB } from '../source/db';
+import { specimen } from '../source/controllers/specimens';
 
 const feedingEvent = {
-  id: 42,
+  specimen: 'm-123',
   date: '2013-04-27T22:46:27.000Z',
-  comment: '1 Mouse'
+  item: 'Mouse',
+  quantity: 1
 };
 
-let server: any;
+const testSpecimen = {
+  id: 'm-123',
+  scientificName: 'Antaresia childreni',
+  commonName: 'Childrens python',
+  sex: 'male'
+};
 
 beforeAll(async () => {
-  server = http.createServer();
-  server.listen(6666, () => console.log(`The server is running on port 6666`));
-  await connectDB();
+  await specimen.create(testSpecimen);
 });
 
 afterAll(async () => {
-  closeDB();
-  server.close();
+  await closeDB();
 });
 
 describe('/feedings', () => {
   it('add feeding event', async () => {
     const result = await request(app)
-      .post('/feedings')
+      .post(`/specimens/${testSpecimen.id}/feedings`)
       .set('Content-Type', 'application/json')
       .send(feedingEvent);
     expect(result.statusCode).toEqual(200);
@@ -33,32 +36,52 @@ describe('/feedings', () => {
 
   it('add duplicate feeding event', async () => {
     const result = await request(app)
-      .post('/feedings')
+      .post(`/specimens/${testSpecimen.id}/feedings`)
       .set('Content-Type', 'application/json')
       .send(feedingEvent);
     expect(result.statusCode).toEqual(403);
   });
 
+  it('add comments to existing feeding', async () => {
+    const result = await request(app)
+      .post(`/specimens/${testSpecimen.id}/feedings`)
+      .set('Content-Type', 'application/json')
+      .send({
+        specimen: feedingEvent.specimen,
+        item: feedingEvent.item,
+        quantity: feedingEvent.quantity,
+        date: feedingEvent.date,
+        comment: 'regurgitated'
+      });
+    expect(result.statusCode).toEqual(200);
+  });
+
   it('update feeding event', async () => {
     const result = await request(app)
-      .put(`/feedings/${feedingEvent.id}`)
+      .put(`/specimens/${testSpecimen.id}/feedings`)
       .set('Content-Type', 'application/json')
-      .send({ male: 'm-123', female: 'f-123' });
+      .send({ specimen: 'm-123', comment: 'refused' });
     expect(result.statusCode).toEqual(200);
   });
 
   it('get feeding events', async () => {
-    const result = await request(app).get(`/feedings`);
+    const result = await request(app).get(
+      `/specimens/${testSpecimen.id}/feedings`
+    );
     expect(result.statusCode).toEqual(200);
   });
 
   it('get feeding event', async () => {
-    const result = await request(app).get(`/feedings/${feedingEvent.id}`);
+    const result = await request(app).get(
+      `/specimens/${testSpecimen.id}/feedings`
+    );
     expect(result.statusCode).toEqual(200);
   });
 
-  it('delete feeding event', async () => {
-    const result = await request(app).delete(`/feedings/${feedingEvent.id}`);
+  xit('delete feeding event', async () => {
+    const result = await request(app).delete(
+      `/specimens/${testSpecimen.id}/feedings`
+    );
     expect(result.statusCode).toEqual(200);
   });
 });

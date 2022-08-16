@@ -4,7 +4,7 @@ import morgan from 'morgan';
 import specimens from './routes/specimens';
 import breedings from './routes/breeding-events';
 import feedings from './routes/feeding-events';
-import { connect } from 'mongoose';
+import { connectDB } from './db';
 
 const app: Express = express();
 
@@ -32,19 +32,21 @@ async function main() {
   app.use('/', breedings);
   app.use('/', feedings);
 
-  app.use((req, res, next) => {
+  app.use((req, res) => {
     const error = new Error('not found');
     return res.status(404).json({
       message: error.message
     });
   });
 
-  //const mongo = await connect('mongodb://localhost:27017/herpmanager');
+  await connectDB();
 
   const PORT: any = process.env.PORT ?? 6060;
-  // httpServer.listen(PORT, () =>
-  //   console.log(`The server is running on port ${PORT}`)
-  // );
+  if (!httpServer.listening) {
+    httpServer.listen(PORT, () =>
+      console.log(`The server is running on port ${PORT}`)
+    );
+  }
 }
 
 main();
