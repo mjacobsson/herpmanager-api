@@ -5,7 +5,7 @@
   "main": "source/server.ts",
   "scripts": {
     "lint": "eslint . --ext .ts",
-    "test": "jest --detectOpenHandles",
+    "test": "jest -c jest.config.js",
     "dev": "nodemon source/server.ts",
     "build": "rm -rf build/ && prettier --write source/ && tsc",
     "prettier-format": "prettier --config .prettierrc '*/**/*.ts' --write"
@@ -18,6 +18,7 @@
     "@types/mongoose": "^5.11.97",
     "@types/morgan": "^1.9.3",
     "express": "^4.18.1",
+    "http-terminator": "^3.2.0",
     "mongoose": "^6.5.1",
     "morgan": "^1.10.0",
     "nodemon": "^2.0.19",

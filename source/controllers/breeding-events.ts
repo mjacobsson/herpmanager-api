@@ -3,18 +3,16 @@ import { Schema, model } from 'mongoose';
 import { specimen } from './specimens';
 
 export interface IBreedingEvent {
-  id: number;
+  individual: string;
   date: Date;
-  male: string;
-  female: string;
+  mate: string;
   comment: string;
 }
 
 const breedingEventSchema = new Schema<IBreedingEvent>({
-  id: { type: Number, required: true, unique: true },
+  individual: { type: String, required: true },
   date: { type: Date, required: true },
-  male: { type: String, required: false },
-  female: { type: String, required: false },
+  mate: { type: String, required: false },
   comment: { type: String, required: true }
 });
 
@@ -24,36 +22,33 @@ const breedingEvent = model<IBreedingEvent>(
 );
 
 const addBreedingEvent = async (req: Request, res: Response) => {
-  const id: number = req.body.id;
+  const id: string = req.params.id as string;
   const date: Date = req.body.date;
-  const male: string = req.body.male;
-  const female: string = req.body.female;
+  const mate: string = req.body.mate;
   const comment: string = req.body.comment;
 
   try {
-    const maleSpecimen = await specimenExists(male);
-    const femaleSpecimen = await specimenExists(female);
-    if (male && !maleSpecimen) {
-      return res
-        .status(400)
-        .json(`non-existent male specimen: ${maleSpecimen}`);
+    if (id === mate) {
+      return res.status(400).json({
+        error: `the mate can not be the specimen itself (mate: ${mate} specimen: ${id})`
+      });
     }
-    if (female && !femaleSpecimen) {
-      return res
-        .status(400)
-        .json(`non-existent female specimen: ${femaleSpecimen}`);
+    if (mate && !(await specimenExists(mate))) {
+      return res.status(400).json({ error: `non-existent mate: ${mate}` });
     }
+
     const result = await breedingEvent.create({
-      id,
-      date,
-      male,
-      female,
-      comment
+      individual: id,
+      date: date,
+      mate: mate,
+      comment: comment
     });
     return res.status(200).json(result);
   } catch (e: any) {
     if (e.code == 11000) {
-      return res.status(403).json(e.message);
+      return res
+        .status(403)
+        .json({ error: 'could not add breeding event', message: e.message });
     } else {
       return res.status(500).json(e.message);
     }
@@ -61,51 +56,28 @@ const addBreedingEvent = async (req: Request, res: Response) => {
 };
 
 const getBreedingEvents = async (req: Request, res: Response) => {
-  const result = await breedingEvent.find();
-  return res.status(result.length != 0 ? 200 : 404).json(result);
-};
-
-const getBreedingEvent = async (req: Request, res: Response) => {
   const id: string = req.params.id;
-  const result = await breedingEvent.findOne({ id: id });
-  return res.status(result ? 200 : 404).json(result);
+  const result = await breedingEvent.find({ specimen: id }, { _id: 0, __v: 0 });
+  return res.status(result.length != 0 ? 200 : 404).json(result);
 };
 
 const updateBreedingEvent = async (req: Request, res: Response) => {
   const id: string = req.params.id;
   const date: string = req.body.date;
-  const male: string = req.body.male;
-  const female: string = req.body.female;
+  const mate: string = req.body.mate;
   const comment: string = req.body.comment;
 
   const result = await breedingEvent.updateOne({
-    id: id,
+    specimen: id,
     date: date,
-    male: male,
-    female: female,
+    mate: mate,
     comment: comment
   });
   return res.status(200).json(result);
 };
 
 const deleteBreedingEvent = async (req: Request, res: Response) => {
-  const id: string = req.params.id;
-  const { acknowledged, deletedCount } = await breedingEvent.deleteOne({
-    id: id
-  });
-
-  if (acknowledged) {
-    if (deletedCount == 1) {
-      return res.status(200).json('breeding event deleted successfully');
-    } else if (deletedCount == 0) {
-      return res.status(404).json('breeding event not found');
-    } else {
-      return res
-        .status(500)
-        .json('something unexpected happend while trying to delete');
-    }
-  }
-  return res.status(500).json('Something went wrong');
+  return res.status(500).json('Not implemented');
 };
 
 const specimenExists = async (id: string): Promise<boolean> => {
@@ -115,7 +87,6 @@ const specimenExists = async (id: string): Promise<boolean> => {
 export default {
   addBreedingEvent,
   getBreedingEvents,
-  getBreedingEvent,
   updateBreedingEvent,
   deleteBreedingEvent
 };

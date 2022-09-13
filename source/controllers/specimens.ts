@@ -53,33 +53,29 @@ const addSpecimen = async (req: Request, res: Response) => {
 };
 
 const getSpecimens = async (req: Request, res: Response) => {
-  const result = await specimen.find();
+  const result = await specimen.find({}, { _id: 0, __v: 0 });
   return res.status(result.length != 0 ? 200 : 404).json(result);
 };
 
 const getSpecimen = async (req: Request, res: Response) => {
   const id: string = req.params.id;
-  const result = await specimen.findOne({ id: id });
+  const result = await specimen.findOne({ id: id }, { _id: 0, __v: 0 });
   return res.status(result ? 200 : 404).json(result);
 };
 
 const updateSpecimen = async (req: Request, res: Response) => {
-  const id: string = req.params.id;
-  const scientificName: string = req.body.scientificName;
-  const commonName: string = req.body.commonName;
-  const sex: string = req.body.sex;
-  const birthDate: string = req.body.birthDate;
-  const sire: string = req.body.sire;
-  const dam: string = req.body.dam;
+  const updatedSpecimen = {
+    id: req.params.id,
+    scientificName: req.body.scientificName,
+    commonName: req.body.commonName,
+    sex: req.body.sex,
+    birthDate: req.body.birthDate,
+    sire: req.body.sire,
+    dam: req.body.dam
+  };
 
-  const response = await specimen.updateOne({
-    id: id,
-    scientificName: scientificName,
-    commonName: commonName,
-    sex: sex,
-    birthDate: birthDate,
-    sire: sire,
-    dam: dam
+  const response = await specimen.updateOne(updatedSpecimen, {
+    omitUndefined: true
   });
   return res.status(200).json(response);
 };

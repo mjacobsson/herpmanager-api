@@ -1,0 +1,367 @@
+openapi: 3.0.0
+servers:
+  - description: Local server
+    url: http://localhost:6060
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/mjacobsson/herpmanager/1.0.0
+info:
+  description: Herpmanager API
+  version: "1.0.0"
+  title: Herpmanager API
+  contact:
+    email: mats.jacobsson@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: specimens
+    description: Specimen information
+  - name: feedings
+    description: Feeding events
+  - name: breedings
+    description: Breeding events
+paths:
+  /specimens:
+    get:
+      tags:
+        - specimens
+      summary: get specimens
+      operationId: getSpecimens
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: query
+          name: searchString
+          description: pass an optional search string for looking up inventory
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Specimen'
+        '400':
+          description: bad input parameter
+    post:
+      tags:
+        - specimens
+      summary: adds a specimen
+      operationId: addSpecimen
+      description: Adds a specimen to the database
+      responses:
+        '201':
+          description: item created
+        '400':
+          description: 'invalid input, object invalid'
+        '409':
+          description: specimen already exists
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Specimen'
+        description: Specimen to add
+  /specimens/{specimenId}:
+    get:
+      tags:
+        - specimens
+      summary: get specimen
+      operationId: getSpecimen
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: specimenId
+          description: Id of the specimen to get
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Specimen'
+        '400':
+          description: bad input parameter
+    put:
+      tags:
+        - specimens
+      summary: update specimen
+      operationId: updateSpecimen
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: specimenId
+          description: Id of the specimen to update
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The updated specimen
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Specimen'
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Specimen'
+        description: Specimen to update
+    delete:
+      tags:
+        - specimens
+      summary: delete specimen
+      operationId: deleteSpecimen
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: specimenId
+          description: pass an optional search string for looking up inventory
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: Deleted
+        '404':
+          description: Not found
+
+  /specimens/{specimenId}/feedings:
+    get:
+      tags:
+        - feedings
+      summary: get feedings
+      operationId: getFeedings
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: specimenId
+          description: Id of the specimen to get feedings for
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: searchString
+          description: pass an optional search string for looking up inventory
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Feeding'
+        '400':
+          description: bad input parameter
+    put:
+      tags:
+        - feedings
+      summary: update feeding
+      operationId: updateFeeding
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: specimenId
+          description: Id of the specimen to update
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: The updated feeding
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Feeding'
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feeding'
+        description: Specimen to update
+
+    post:
+      tags:
+        - feedings
+      summary: add feeding
+      operationId: addFeeding
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: specimenId
+          description: Id of the specimen to add feeding event for
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Feeding'
+        description: Feeding event to add
+
+  /specimens/{specimenId}/breedings:
+    get:
+      tags:
+        - breedings
+      summary: get breedings
+      operationId: getBreedings
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: specimenId
+          description: Id of the specimen to get breedings for
+          required: true
+          schema:
+            type: string
+        - in: query
+          name: searchString
+          description: pass an optional search string for looking up inventory
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Breeding'
+        '400':
+          description: bad input parameter
+    post:
+      tags:
+        - breedings
+      summary: add breeding
+      operationId: addBreeding
+      description: |
+        By passing in the appropriate options, you can search for
+        available inventory in the system
+      parameters:
+        - in: path
+          name: specimenId
+          description: Id of the specimen to get breedings for
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: bad input parameter
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Breeding'
+        description: Feeding event to add
+components:
+  schemas:
+    Specimen:
+      type: object
+      required:
+        - id
+        - scientificName
+        - commonName
+        - sex
+      properties:
+        id:
+          type: string
+          example: ap-001-22
+        scientificName:
+          type: string
+          example: Antaresia perthensis
+        commonName:
+          type: string
+          example: Pygmy python
+        sex:
+          type: string
+          example: male
+        birthDate:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        sire:
+          type: string
+          example: ap-002-20
+        dam:
+          type: string
+          example: ap-001-19
+    Feeding:
+      type: object
+      required:
+        - date
+        - item
+        - quantity
+      properties:
+        date:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        item:
+          type: string
+          example: mouse
+        quantity:
+          type: number
+          example: 1
+        comment:
+          type: string
+          example: "refused food item"
+    Breeding:
+      type: object
+      required:
+        - date
+        - comment
+      properties:
+
+        date:
+          type: string
+          format: date-time
+          example: '2016-08-29T09:12:33.001Z'
+        male:
+          type: string
+          example: ap-001-22
+        female:
+          type: string
+          example: ap-002-20
+        comment:
+          type: string
+          example: "copulation"

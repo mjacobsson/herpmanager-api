@@ -44,7 +44,7 @@ describe('/feedings', () => {
 
   it('add comments to existing feeding', async () => {
     const result = await request(app)
-      .post(`/specimens/${testSpecimen.id}/feedings`)
+      .put(`/specimens/${testSpecimen.id}/feedings`)
       .set('Content-Type', 'application/json')
       .send({
         specimen: feedingEvent.specimen,
@@ -78,10 +78,25 @@ describe('/feedings', () => {
     expect(result.statusCode).toEqual(200);
   });
 
-  xit('delete feeding event', async () => {
-    const result = await request(app).delete(
-      `/specimens/${testSpecimen.id}/feedings`
-    );
+  it('delete feeding event', async () => {
+    const result = await request(app)
+      .delete(`/specimens/${testSpecimen.id}/feedings`)
+      .set('Content-Type', 'application/json')
+      .send({
+        specimen: feedingEvent.specimen,
+        date: feedingEvent.date
+      });
     expect(result.statusCode).toEqual(200);
+  });
+
+  it('delete non existing feeding event', async () => {
+    const result = await request(app)
+      .delete(`/specimens/${testSpecimen.id}/feedings`)
+      .set('Content-Type', 'application/json')
+      .send({
+        specimen: feedingEvent.specimen,
+        date: feedingEvent.date
+      });
+    expect(result.statusCode).toEqual(404);
   });
 });
