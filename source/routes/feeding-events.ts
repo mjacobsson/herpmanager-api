@@ -3,8 +3,7 @@ import controller from '../controllers/feeding-events';
 const router = express.Router();
 
 router.get('/specimens/:specimen/feedings', controller.getFeedings);
-router.get('/specimens/:specimen/feedings/:feeding', controller.getFeeding);
 router.put('/specimens/:specimen/feedings', controller.updateFeedingEvent);
 router.post('/specimens/:specimen/feedings', controller.addFeedingEvent);
-//router.delete('/feedings/:id', controller.deleteFeedingEvent);
+router.delete('/specimens/:specimen/feedings', controller.deleteFeedingEvent);
 export = router;
