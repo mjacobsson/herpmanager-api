@@ -1,29 +1,20 @@
 import request from 'supertest';
 import { app } from '../source/server';
-import { closeDB } from '../source/db';
-import { specimen } from '../source/controllers/specimens';
 
 const feedingEvent = {
   specimen: 'm-123',
   date: '2013-04-27T22:46:27.000Z',
   item: 'Mouse',
-  quantity: 1
+  quantity: 1,
+  comment: 'accepted'
 };
 
 const testSpecimen = {
-  id: 'm-123',
+  id: 'ac-2019-02',
   scientificName: 'Antaresia childreni',
   commonName: 'Childrens python',
   sex: 'male'
 };
-
-beforeAll(async () => {
-  await specimen.create(testSpecimen);
-});
-
-afterAll(async () => {
-  await closeDB();
-});
 
 describe('/feedings', () => {
   it('add feeding event', async () => {

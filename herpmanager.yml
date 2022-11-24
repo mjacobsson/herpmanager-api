@@ -12,7 +12,7 @@ info:
     email: mats.jacobsson@gmail.com
   license:
     name: Apache 2.0
-    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 tags:
   - name: specimens
     description: Specimen information
@@ -28,25 +28,32 @@ paths:
       summary: get specimens
       operationId: getSpecimens
       description: |
-        By passing in the appropriate options, you can search for
-        available inventory in the system
+        Get all specimens, optionally including feedings and breeding events.
       parameters:
         - in: query
-          name: searchString
-          description: pass an optional search string for looking up inventory
+          name: includeFeedings
+          description: whether or not to include feeding events
           required: false
+          example: true
           schema:
-            type: string
+            type: boolean
+        - in: query
+          name: includeBreedings
+          description: whether or not to include breeding events
+          required: false
+          example: true
+          schema:
+            type: boolean
       responses:
-        '200':
+        "200":
           description: search results matching criteria
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Specimen'
-        '400':
+                  $ref: "#/components/schemas/Specimen"
+        "400":
           description: bad input parameter
     post:
       tags:
@@ -55,17 +62,17 @@ paths:
       operationId: addSpecimen
       description: Adds a specimen to the database
       responses:
-        '201':
+        "201":
           description: item created
-        '400':
-          description: 'invalid input, object invalid'
-        '409':
+        "400":
+          description: "invalid input, object invalid"
+        "409":
           description: specimen already exists
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Specimen'
+              $ref: "#/components/schemas/Specimen"
         description: Specimen to add
   /specimens/{specimenId}:
     get:
@@ -83,14 +90,28 @@ paths:
           required: true
           schema:
             type: string
+        - in: query
+          name: includeFeedings
+          description: whether or not to include feeding events
+          required: false
+          example: true
+          schema:
+            type: boolean
+        - in: query
+          name: includeBreedings
+          description: whether or not to include breeding events
+          required: false
+          example: true
+          schema:
+            type: boolean
       responses:
-        '200':
+        "200":
           description: search results matching criteria
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Specimen'
-        '400':
+                $ref: "#/components/schemas/Specimen"
+        "400":
           description: bad input parameter
     put:
       tags:
@@ -108,19 +129,19 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: The updated specimen
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Specimen'
-        '400':
+                $ref: "#/components/schemas/Specimen"
+        "400":
           description: bad input parameter
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Specimen'
+              $ref: "#/components/schemas/Specimen"
         description: Specimen to update
     delete:
       tags:
@@ -138,9 +159,9 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        "204":
           description: Deleted
-        '404':
+        "404":
           description: Not found
 
   /specimens/{specimenId}/feedings:
@@ -159,22 +180,16 @@ paths:
           required: true
           schema:
             type: string
-        - in: query
-          name: searchString
-          description: pass an optional search string for looking up inventory
-          required: false
-          schema:
-            type: string
       responses:
-        '200':
+        "200":
           description: search results matching criteria
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Feeding'
-        '400':
+                  $ref: "#/components/schemas/Feeding"
+        "400":
           description: bad input parameter
     put:
       tags:
@@ -192,19 +207,19 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: The updated feeding
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Feeding'
-        '400':
+                $ref: "#/components/schemas/Feeding"
+        "400":
           description: bad input parameter
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Feeding'
+              $ref: "#/components/schemas/Feeding"
         description: Specimen to update
 
     post:
@@ -223,15 +238,15 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
-        '400':
+        "400":
           description: bad input parameter
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Feeding'
+              $ref: "#/components/schemas/Feeding"
         description: Feeding event to add
 
   /specimens/{specimenId}/breedings:
@@ -250,22 +265,16 @@ paths:
           required: true
           schema:
             type: string
-        - in: query
-          name: searchString
-          description: pass an optional search string for looking up inventory
-          required: false
-          schema:
-            type: string
       responses:
-        '200':
+        "200":
           description: search results matching criteria
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Breeding'
-        '400':
+                  $ref: "#/components/schemas/Breeding"
+        "400":
           description: bad input parameter
     post:
       tags:
@@ -283,15 +292,15 @@ paths:
           schema:
             type: string
       responses:
-        '200':
+        "200":
           description: OK
-        '400':
+        "400":
           description: bad input parameter
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Breeding'
+              $ref: "#/components/schemas/Breeding"
         description: Feeding event to add
 components:
   schemas:
@@ -300,12 +309,11 @@ components:
       required:
         - id
         - scientificName
-        - commonName
         - sex
       properties:
         id:
           type: string
-          example: ap-001-22
+          example: ap-2010-04
         scientificName:
           type: string
           example: Antaresia perthensis
@@ -318,24 +326,17 @@ components:
         birthDate:
           type: string
           format: date-time
-          example: '2016-08-29T09:12:33.001Z'
-        sire:
-          type: string
-          example: ap-002-20
-        dam:
-          type: string
-          example: ap-001-19
+          example: "2010-08-29"
     Feeding:
       type: object
       required:
-        - date
         - item
         - quantity
       properties:
         date:
           type: string
           format: date-time
-          example: '2016-08-29T09:12:33.001Z'
+          example: "2016-08-29T09:12:33.001Z"
         item:
           type: string
           example: mouse
@@ -348,20 +349,15 @@ components:
     Breeding:
       type: object
       required:
-        - date
         - comment
       properties:
-
         date:
           type: string
           format: date-time
-          example: '2016-08-29T09:12:33.001Z'
-        male:
+          example: "2016-08-29"
+        mate:
           type: string
           example: ap-001-22
-        female:
-          type: string
-          example: ap-002-20
         comment:
           type: string
           example: "copulation"

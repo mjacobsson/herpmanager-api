@@ -1,9 +1,7 @@
 import request from 'supertest';
 import { app } from '../source/server';
-import { closeDB } from '../source/db';
-import { specimen } from '../source/controllers/specimens';
 
-var breedingEvent = {
+const breedingEvent = {
   individual: '',
   date: '2013-04-27T22:46:27.000Z',
   comment: 'Ovulation',
@@ -29,7 +27,7 @@ beforeAll(async () => {
 });
 
 afterAll(async () => {
-  await closeDB();
+
 });
 
 describe('/breedings', () => {
