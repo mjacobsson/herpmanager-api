@@ -1,87 +1,59 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { PrismaClient } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import { Request, Response } from 'express';
-import { Schema, model } from 'mongoose';
-import { specimen } from './specimens';
 
-export interface IBreedingEvent {
-  individual: string;
-  date: Date;
-  mate: string;
-  comment: string;
-}
-
-const breedingEventSchema = new Schema<IBreedingEvent>({
-  individual: { type: String, required: true },
-  date: { type: Date, required: true },
-  mate: { type: String, required: false },
-  comment: { type: String, required: true }
-});
-
-const breedingEvent = model<IBreedingEvent>(
-  'BreedingEvent',
-  breedingEventSchema
-);
+const prisma = new PrismaClient();
 
 const addBreedingEvent = async (req: Request, res: Response) => {
-  const id: string = req.params.id as string;
-  const date: Date = req.body.date;
-  const mate: string = req.body.mate;
-  const comment: string = req.body.comment;
-
-  try {
-    if (id === mate) {
-      return res.status(400).json({
-        error: `the mate can not be the specimen itself (mate: ${mate} specimen: ${id})`
-      });
+  const f = await prisma.specimen.update({
+    where: { id: req.params.specimen },
+    data: {
+      breedingEvents: {
+        create: {
+          mate: req.body.mate,
+          date: req.body.date ? new Date(req.body.date) : new Date(),
+          comment: req.body.comment
+        }
+      }
     }
-    if (mate && !(await specimenExists(mate))) {
-      return res.status(400).json({ error: `non-existent mate: ${mate}` });
-    }
-
-    const result = await breedingEvent.create({
-      individual: id,
-      date: date,
-      mate: mate,
-      comment: comment
-    });
-    return res.status(200).json(result);
-  } catch (e: any) {
-    if (e.code == 11000) {
-      return res
-        .status(403)
-        .json({ error: 'could not add breeding event', message: e.message });
-    } else {
-      return res.status(500).json(e.message);
-    }
-  }
+  });
+  return res.status(200).json(f);
 };
 
 const getBreedingEvents = async (req: Request, res: Response) => {
-  const id: string = req.params.id;
-  const result = await breedingEvent.find({ specimen: id }, { _id: 0, __v: 0 });
-  return res.status(result.length != 0 ? 200 : 404).json(result);
+  const f = await prisma.breedingEvent.findMany({
+    where: { specimenId: req.params.specimen }
+  });
+  return res.status(200).json(f);
 };
 
 const updateBreedingEvent = async (req: Request, res: Response) => {
-  const id: string = req.params.id;
-  const date: string = req.body.date;
-  const mate: string = req.body.mate;
-  const comment: string = req.body.comment;
-
-  const result = await breedingEvent.updateOne({
-    specimen: id,
-    date: date,
-    mate: mate,
-    comment: comment
+  //TODO: check req.params.specimen too!
+  const f = await prisma.breedingEvent.update({
+    where: { id: req.params.id },
+    data: {
+      mate: req.body.mate,
+      date: new Date(req.body.date),
+      comment: req.body.comment
+    }
   });
-  return res.status(200).json(result);
+  return res.status(200).json(f);
 };
 
 const deleteBreedingEvent = async (req: Request, res: Response) => {
-  return res.status(500).json('Not implemented');
-};
-
-const specimenExists = async (id: string): Promise<boolean> => {
-  return (await specimen.findOne({ id: id })) != null;
+  //TODO: check req.params.specimen too!
+  try {
+    const f = await prisma.breedingEvent.delete({
+      where: { id: req.body.id }
+    });
+    return res.status(200).json(f);
+  } catch (e) {
+    if (e instanceof PrismaClientKnownRequestError) {
+      if (e.code === 'P2023') return res.status(500).json(e.meta?.message);
+      if (e.code === 'P2025') return res.status(404).json(e.meta?.cause);
+    }
+  }
 };
 
 export default {

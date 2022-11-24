@@ -4,14 +4,13 @@ import morgan from 'morgan';
 import specimens from './routes/specimens';
 import breedings from './routes/breeding-events';
 import feedings from './routes/feeding-events';
-import { connectDB } from './db';
 import { createHttpTerminator } from 'http-terminator';
 
 const app: Express = express();
 
 const httpServer = http.createServer(app);
 
-const PORT: any = process.env.PORT ?? 6060;
+const PORT: unknown = process.env.PORT ?? 6060;
 
 async function main() {
   app.use(morgan('dev'));
@@ -42,9 +41,7 @@ async function main() {
     });
   });
 
-  await connectDB();
-
-  var server = httpServer.listen(PORT, () =>
+  const server = httpServer.listen(PORT, () =>
     console.log(`The server is running on port ${PORT}`)
   );
   const httpTerminator = createHttpTerminator({ server });

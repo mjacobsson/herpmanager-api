@@ -1,0 +1,45 @@
+// datasource db {
+//   provider = "sqlite"
+//   url      = "file:./dev.db"
+// }
+
+datasource db {
+  provider = "mongodb"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Specimen {
+  //id             Int             @id @default(autoincrement())
+  id             String          @id @map("_id")
+  scientificName String
+  commonName     String?
+  birthDate      DateTime?
+  sex            String
+  feedingEvents  FeedingEvent[]
+  breedingEvents BreedingEvent[]
+}
+
+model FeedingEvent {
+  //id         Int       @id @default(autoincrement())
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  quantity   Int
+  item       String
+  date       DateTime? @default(now())
+  comment    String?
+  Specimen   Specimen? @relation(fields: [specimenId], references: [id])
+  specimenId String
+}
+
+model BreedingEvent {
+  //id         Int       @id @default(autoincrement())
+  id         String    @id @default(auto()) @map("_id") @db.ObjectId
+  date       DateTime? @default(now())
+  mate       String?
+  comment    String
+  Specimen   Specimen? @relation(fields: [specimenId], references: [id])
+  specimenId String
+}

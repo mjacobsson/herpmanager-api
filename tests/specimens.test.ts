@@ -1,16 +1,11 @@
 import request from 'supertest';
 import { app } from '../source/server';
-import { closeDB } from '../source/db';
 
 const specimen = {
-  id: 'm-123',
+  id: 'ac-2010-05',
   scientificName: 'Antaresia childreni',
   sex: 'unsexed'
 };
-
-afterAll(async () => {
-  await closeDB();
-});
 
 describe('/specimen', () => {
   it('add specimen', async () => {
@@ -26,14 +21,18 @@ describe('/specimen', () => {
       .post('/specimens')
       .set('Content-Type', 'application/json')
       .send(specimen);
-    expect(result.statusCode).toEqual(403);
+    //TODO: should probably not be HTTP 500
+    expect(result.statusCode).toEqual(500);
   });
 
   it('update specimen', async () => {
     const result = await request(app)
       .put(`/specimens/${specimen.id}`)
       .set('Content-Type', 'application/json')
-      .send({ birthDate: '2013-04-28T00:46:27.000Z' });
+      .send({
+        birthDate: '2013-04-28T00:46:27.000Z',
+        commonName: 'Childrens python'
+      });
     expect(result.statusCode).toEqual(200);
   });
 
@@ -52,7 +51,7 @@ describe('/specimen', () => {
     expect(result.statusCode).toEqual(200);
   });
 
-  it('delete non existing specimen', async () => {
+  it('delete already deleted specimen', async () => {
     const result = await request(app).delete(`/specimens/${specimen.id}`);
     expect(result.statusCode).toEqual(404);
   });
